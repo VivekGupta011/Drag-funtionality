@@ -1,4 +1,3 @@
-import DndExample from "@/components/DndExample";
 import StateLayout from "@/components/StateLayout";
 
 
