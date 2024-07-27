@@ -15,20 +15,25 @@ const config: Config = {
       },
       colors: {
         "custom-blue": "rgb(0 94 184 / <alpha-value>)",
-        "bg-sky-blue": "rgb(238 247 249  / <alpha-value>)",
-        "work-ratio-text-color": "rgb(0 94 184  / <alpha-value>)",
-        "help-bg": "rgb(0 134 191  / <alpha-value>)",
-        "footer-info": "rgb(0 64 122  / <alpha-value>)",
+        "bg-sky-blue": "rgb(238 247 249 / <alpha-value>)",
+        "work-ratio-text-color": "rgb(0 94 184 / <alpha-value>)",
+        "help-bg": "rgb(0 134 191 / <alpha-value>)",
+        "footer-info": "rgb(0 64 122 / <alpha-value>)",
         "Card-text-color": "rgb(66 85 99 / <alpha-value>)",
         "add-btn-bg": "rgb(0 134 191 / <alpha-value>)",
         "add-top-border": "rgba(0, 134, 191, 0.3)",
         'custom-gray': '#D1D5DB',
+        'custom-background': '#F5F7F8',
       },
       textDecoration: {
         "yellow-underline": "underline yellow",
+      },
+      fontFamily: {
+        roboto: ['Roboto', 'sans-serif'],
       },
     },
   },
   plugins: [],
 }
+
 export default config

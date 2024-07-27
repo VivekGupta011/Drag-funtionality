@@ -3,7 +3,6 @@
 import { cardsData } from "@/bin/CardsData";
 import { useEffect, useState } from "react";
 import { Draggable, DropResult, Droppable } from "react-beautiful-dnd";
-import LoadingSkeleton from "./LoadingSkeleton";
 import { DndContext } from "@/context/DndContext";
 interface Cards {
     id: number;
