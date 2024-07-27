@@ -39,7 +39,7 @@ interface State {
 
 // Define the type for your data
 const Table: React.FC = () => {
-  const [data, setData] = useState<State[]>(tableData);
+  const [data, setData] = useState<any[]>(tableData);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentStateIndex, setCurrentStateIndex] = useState<number | null>(
     null
@@ -49,7 +49,7 @@ const Table: React.FC = () => {
   );
   const [filterInput, setFilterInput] = useState("");
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   // Function to add a new filter to a state
   const addFilter = (index: number) => {
@@ -189,7 +189,7 @@ const Table: React.FC = () => {
           return {
             ...item,
             designVariants: item.designVariants.filter(
-              (_, vi) => vi !== variantIndex
+              (_: any, vi: number) => vi !== variantIndex
             ),
           };
         }
@@ -365,7 +365,7 @@ const Table: React.FC = () => {
                                   style={{ maxWidth: "100%" }}
                                 >
                                   <div className="flex space-x-4 min-w-max">
-                                    {item.designVariants.map((variant, vi) => (
+                                    {item.designVariants.map((variant:any, vi:any) => (
                                       <Draggable
                                         key={vi}
                                         draggableId={`variant-${index}-${vi}`}
