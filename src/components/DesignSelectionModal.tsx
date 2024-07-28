@@ -32,6 +32,9 @@ const DesignItem: React.FC<{ design: Design; onSelect: (design: Design) => void 
   </div>
 ));
 
+// Set the display name for the component
+DesignItem.displayName = "DesignItem";
+
 const DesignSelectionModal: React.FC<DesignSelectionModalProps> = ({
   designs,
   onSelect,
