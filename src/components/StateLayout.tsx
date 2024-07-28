@@ -13,34 +13,21 @@ import { FiEdit } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { LuPlus } from "react-icons/lu";
 import { designs } from "@/bin/CardsData";
+import DesignSelectionModal from "./DesignSelectionModal";
+import FilterModal from "./FilterModal";
+import { State } from "@/bin/CardsData";
+import { Design } from "@/bin/CardsData";
+import { tableData } from "@/bin/CardsData";
+import toast from "react-hot-toast";
 
-// Sample tableData for initial state
-const tableData = [
-  {
-    state: "Category 1",
-    filters: [],
-    designVariants: [{ img: null, text: "Add design" }],
-  },
-];
 
-// Interface for design data
-interface Design {
-  img: any;
-  text: string;
-  description: string;
-}
 
-// Interface for state data
-interface State {
-  state: string;
-  filters: string[];
-  designVariants: Design[];
-}
 
 // Define the type for your data
 const Table: React.FC = () => {
   const [data, setData] = useState<any[]>(tableData);
   const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [currentStateIndex, setCurrentStateIndex] = useState<number | null>(
     null
   );
@@ -110,11 +97,13 @@ const Table: React.FC = () => {
       },
     ]);
     setCurrentIndex(data.length);
+    toast.success('State added Succesully.');
   };
 
   // Function to delete a state
   const deleteState = (index: number) => {
     setData(data.filter((_, i) => i !== index));
+    toast.error('State Deleted!')
   };
 
   // Function to add a new variant column to a state
@@ -133,12 +122,30 @@ const Table: React.FC = () => {
         return item;
       })
     );
+    toast.success('Variant added');
   };
 
   // Function to handle click on "Add Filter" button
-  const handleAddFilterClick = (index: any) => {
+  const handleAddFilterClick = (index: number) => {
     setCurrentIndex(index);
     setShowFilterModal(true);
+  };
+
+  const onAddFilter = (filter: string) => {
+    if (currentIndex !== null) {
+      setData((prevData) =>
+        prevData.map((item, i) => {
+          if (i === currentIndex) {
+            return {
+              ...item,
+              filters: [...item.filters, filter],
+            };
+          }
+          return item;
+        })
+      );
+      setCurrentIndex(null); // Reset after use
+    }
   };
 
   // Function to handle input change for filter input
@@ -223,8 +230,8 @@ const Table: React.FC = () => {
       );
     }
     setModalOpen(false);
+    toast.success('Variant template updated');
   };
-
 
   return (
     <div className=" pt-24 lg:pl-28 md:pl-20 sm:pl-16 pb-12 bg-white p-12">
@@ -242,7 +249,6 @@ const Table: React.FC = () => {
           Publish Feed
         </button>
       </div>
-
       <div className="bg-custom-background">
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="states" type="state">
@@ -336,9 +342,7 @@ const Table: React.FC = () => {
                                         marginRight: "10px",
                                       }}
                                     >
-                                      <p
-                                        className="border border-solid p-1 bg-white rounded-md font-bold flex justify-center items-center text-[20px] space-x-1 overflow-hidden whitespace-nowrap text-ellipsis"
-                                      >
+                                      <p className="border border-solid p-1 bg-white rounded-md font-bold flex justify-center items-center text-[20px] space-x-1 overflow-hidden whitespace-nowrap text-ellipsis">
                                         {item.filters.join(", ")}
                                       </p>
                                     </div>
@@ -365,71 +369,75 @@ const Table: React.FC = () => {
                                   style={{ maxWidth: "100%" }}
                                 >
                                   <div className="flex space-x-4 min-w-max">
-                                    {item.designVariants.map((variant:any, vi:any) => (
-                                      <Draggable
-                                        key={vi}
-                                        draggableId={`variant-${index}-${vi}`}
-                                        index={vi}
-                                      >
-                                        {(provided) => (
-                                          <>
-                                            <div
-                                              ref={provided.innerRef}
-                                              {...provided.draggableProps}
-                                              {...provided.dragHandleProps}
-                                              className="relative bg-white p-4 w-[12rem] h-[13.5rem] min-w-[14rem] border-dotted border-gray-200 rounded-md shadow-md flex flex-col justify-center items-center"
-                                              style={{ borderWidth: "3px" }}
-                                            >
-                                              {variant.img ? (
-                                                <div className="relative w-full h-32 flex items-center justify-center">
-                                                  <img
-                                                    src={variant.img?.src}
-                                                    alt={`Design ${vi + 1}`}
-                                                    className="w-full h-32 object-cover mb-2 rounded-md"
-                                                  />
-
-                                                  <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300">
-                                                    <button onClick={() => {}}>
-                                                      <FiEdit
-                                                        size="24"
-                                                        className="text-black"
-                                                      />
-                                                    </button>
-                                                  </div>
-                                                </div>
-                                              ) : (
-                                                <button
-                                                  className="border border-solid p-2 rounded-md flex justify-center items-center space-x-1"
-                                                  onClick={() =>
-                                                    handleAddDesignClick(
-                                                      index,
-                                                      vi
-                                                    )
-                                                  }
-                                                >
-                                                  <LuPlus
-                                                    size="25"
-                                                    className=""
-                                                  />
-                                                  <span>Add design</span>
-                                                </button>
-                                              )}
-                                              <p
-                                                className="text-gray-600 text-sm overflow-hidden whitespace-nowrap text-ellipsis font-bold py-3"
-                                                style={{ maxWidth: "140px" }}
+                                    {item.designVariants.map(
+                                      (variant: any, vi: any) => (
+                                        <Draggable
+                                          key={vi}
+                                          draggableId={`variant-${index}-${vi}`}
+                                          index={vi}
+                                        >
+                                          {(provided) => (
+                                            <>
+                                              <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                className="relative bg-white p-4 w-[12rem] h-[13.5rem] min-w-[14rem] border-dotted border-gray-200 rounded-md shadow-md flex flex-col justify-center items-center"
+                                                style={{ borderWidth: "3px" }}
                                               >
-                                                {variant.description}
-                                              </p>
-                                            </div>
+                                                {variant.img ? (
+                                                  <div className="relative w-full h-32 flex items-center justify-center">
+                                                    <img
+                                                      src={variant.img?.src}
+                                                      alt={`Design ${vi + 1}`}
+                                                      className="w-full h-32 object-cover mb-2 rounded-md"
+                                                    />
 
-                                            <div
-                                              className="bg-gray-200 h-[13.5rem] mx-12"
-                                              style={{ width: "2px" }}
-                                            ></div>
-                                          </>
-                                        )}
-                                      </Draggable>
-                                    ))}
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                                                      <button
+                                                        onClick={() => {}}
+                                                      >
+                                                        <FiEdit
+                                                          size="24"
+                                                          className="text-black"
+                                                        />
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                ) : (
+                                                  <button
+                                                    className="border border-solid p-2 rounded-md flex justify-center items-center space-x-1"
+                                                    onClick={() =>
+                                                      handleAddDesignClick(
+                                                        index,
+                                                        vi
+                                                      )
+                                                    }
+                                                  >
+                                                    <LuPlus
+                                                      size="25"
+                                                      className=""
+                                                    />
+                                                    <span>Add design</span>
+                                                  </button>
+                                                )}
+                                                <p
+                                                  className="text-gray-600 text-sm overflow-hidden whitespace-nowrap text-ellipsis font-bold py-3"
+                                                  style={{ maxWidth: "140px" }}
+                                                >
+                                                  {variant.description}
+                                                </p>
+                                              </div>
+
+                                              <div
+                                                className="bg-gray-200 h-[13.5rem] mx-12"
+                                                style={{ width: "2px" }}
+                                              ></div>
+                                            </>
+                                          )}
+                                        </Draggable>
+                                      )
+                                    )}
                                     <div
                                       className="relative rounded-md flex justify-center items-center"
                                       style={{
@@ -480,68 +488,19 @@ const Table: React.FC = () => {
 
       {/* Modal for selecting a design */}
       {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-screen-lg w-full">
-            <h2 className="text-2xl font-bold mb-4">
-              Select a Design to Link
-            </h2>
-            <div className="overflow-y-auto max-h-[60vh]">
-              <div className="grid grid-cols-2 gap-4">
-                {designs.map((design, index) => (
-                  <div
-                    key={index}
-                    className="cursor-pointer p-4 border border-gray-300 rounded-lg flex flex-col justify-center items-center"
-                    onClick={() => selectDesign(design)}
-                  >
-                    <img
-                      src={design.img.src}
-                      alt={design.text}
-                      className="w-[70%] h-28 object-cover rounded-md mb-2 "
-                    />
-                    <div className="text-center mb-2">{design.text}</div>
-                    <p className="text-gray-600 text-sm">
-                      {design.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <button
-              onClick={() => setModalOpen(false)}
-              className="mt-4 px-6 py-2 bg-red-500 text-white rounded-md"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+        <DesignSelectionModal
+          designs={designs}
+          onSelect={selectDesign}
+          onClose={() => setModalOpen(false)}
+        />
       )}
 
       {/* Modal for adding filter */}
       {showFilterModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-screen-lg w-full space-x-4 space-y-4">
-            <h2 className="text-2xl font-bold mb-4">Add Filter</h2>
-            <input
-              type="text"
-              value={filterInput}
-              onChange={handleFilterInputChange}
-              placeholder="Enter filter value"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-            <button
-              onClick={handleFilterSubmit}
-              className="mt-4 px-6 py-2 bg-green-500 text-white rounded-md"
-            >
-              Add Filter
-            </button>
-            <button
-              onClick={() => setShowFilterModal(false)}
-              className="mt-4 px-6 py-2 bg-red-500 text-white rounded-md"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+        <FilterModal
+          onAddFilter={onAddFilter}
+          onClose={() => setShowFilterModal(false)}
+        />
       )}
     </div>
   );

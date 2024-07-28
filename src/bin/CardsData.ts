@@ -20,12 +20,44 @@ export interface TableRow {
   designVariants: string[];
 }
 
-interface Design {
+export interface DesignType {
+  img: {
+    src: string;
+  };
+  text: string;
+  description?: string;
+}
+
+export interface DesignSelectionModalProps {
+  designs: DesignType[];
+  onSelect: (design: any) => void;
+  onClose: () => void;
+}
+
+export interface FilterModalProps {
+  onAddFilter: (filter: string) => void;
+  onClose: () => void;
+}
+
+// Interface for design data
+export interface Design {
   img: any;
   text: string;
   description: string;
 }
 
+// Interface for state data
+export interface State {
+  state: string;
+  filters: string[];
+  designVariants: Design[];
+}
+
+interface DesignData {
+  img: any;
+  text: string;
+  description: string;
+}
 
 export const cardsData = [
   {
@@ -34,41 +66,43 @@ export const cardsData = [
     components: [
       {
         id: 100,
-        name: "material ui1"
+        name: "material ui1",
       },
       {
         id: 200,
-        name: "bootstrap2"
+        name: "bootstrap2",
       },
       {
         id: 300,
-        name: "material ui3"
+        name: "material ui3",
       },
       {
         id: 400,
-        name: "bootstrap4"
+        name: "bootstrap4",
       },
-    ]
+    ],
   },
+];
 
+// Sample design data
+export const designs: DesignData[] = [
+  { img: img1, text: "", description: "Holiday Shoe Sale " },
+  { img: img2, text: "", description: "New Year New Wardrobe" },
+  { img: img3, text: "", description: "Winter Warm-Up Sale" },
+  { img: img4, text: "", description: "Winter Wonderland Sale  " },
+  { img: img5, text: "", description: "End of Season Shoe Sale" },
+  { img: img6, text: "", description: "Spring Shoe Clearance " },
+  { img: img7, text: "", description: "Men’s Workwear Sale" },
+  { img: img8, text: "", description: "Men’s Winter Collection Sale" },
+  { img: img9, text: "", description: "Men’s Casual Wear Sale" },
+  { img: img12, text: "", description: "Men’ Half shirt" }
+];
 
-]
-
-
-
-export const tableData: TableRow[] = [];
-
-
-  // Sample design data
- export const designs: Design[] = [
-    { img: img1, text: "", description: "Holiday Shoe Sale " },
-    { img: img2, text: "", description: "New Year New Wardrobe" },
-    { img: img3, text: "", description: "Winter Warm-Up Sale" },
-    { img: img4, text: "", description: "Winter Wonderland Sale  " },
-    { img: img5, text: "", description: "End of Season Shoe Sale" },
-    { img: img6, text: "", description: "Spring Shoe Clearance " },
-    { img: img7, text: "", description: "Men’s Workwear Sale" },
-    { img: img8, text: "", description: "Men’s Winter Collection Sale" },
-    { img: img9, text: "", description: "Men’s Casual Wear Sale" },
-  ];
-
+// Sample tableData for initial state
+export const tableData = [
+  {
+    state: "Category 1",
+    filters: [],
+    designVariants: [{ img: null, text: "Add design" }],
+  },
+];
