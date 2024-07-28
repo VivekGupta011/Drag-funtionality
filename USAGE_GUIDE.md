@@ -1,4 +1,4 @@
-Installation
+Installation Guide
 
 =>Clone the Repository:
 git clone [repository-url]

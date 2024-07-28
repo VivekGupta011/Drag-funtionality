@@ -19,6 +19,7 @@ import { State } from "@/bin/CardsData";
 import { Design } from "@/bin/CardsData";
 import { tableData } from "@/bin/CardsData";
 import toast from "react-hot-toast";
+import { truncateText } from "@/bin/CardsData";
 
 
 
@@ -342,8 +343,8 @@ const Table: React.FC = () => {
                                         marginRight: "10px",
                                       }}
                                     >
-                                      <p className="border border-solid p-1 bg-white rounded-md font-bold flex justify-center items-center text-[20px] space-x-1 overflow-hidden whitespace-nowrap text-ellipsis">
-                                        {item.filters.join(", ")}
+                                      <p className="border border-solid p-1 bg-white rounded-md font-bold flex  justify-center items-center text-[20px] space-x-1 overflow-hidden whitespace-nowrap text-ellipsis">
+                                      {truncateText(item.filters.join(", "), 2)}
                                       </p>
                                     </div>
                                   </div>

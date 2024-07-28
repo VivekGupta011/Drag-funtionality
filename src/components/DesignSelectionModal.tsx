@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useMemo, useCallback } from "react";
+import Image from "next/image";
 import { FaSearch } from "react-icons/fa";
 
 interface Design {
@@ -19,9 +20,11 @@ const DesignItem: React.FC<{ design: Design; onSelect: (design: Design) => void 
     className="cursor-pointer p-4 border border-gray-300 rounded-lg flex flex-col justify-center items-center"
     onClick={() => onSelect(design)}
   >
-    <img
+    <Image
       src={design.img.src}
       alt={design.text}
+      width={200}
+      height={200}
       className="w-[70%] h-28 object-cover rounded-md mb-2"
     />
     <div className="text-center mb-2">{design.text}</div>
@@ -36,7 +39,6 @@ const DesignSelectionModal: React.FC<DesignSelectionModalProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  // Debounce the search input to reduce the number of filter operations
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   }, []);

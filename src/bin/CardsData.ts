@@ -86,16 +86,20 @@ export const cardsData = [
 
 // Sample design data
 export const designs: DesignData[] = [
-  { img: img1, text: "", description: "Holiday Shoe Sale " },
-  { img: img2, text: "", description: "New Year New Wardrobe" },
+  { img: img1, text: "", description: "Holiday Shoe Sale" },
+  { img: img2, text: "", description: "New Year, New Wardrobe" },
   { img: img3, text: "", description: "Winter Warm-Up Sale" },
-  { img: img4, text: "", description: "Winter Wonderland Sale  " },
+  { img: img4, text: "", description: "Winter Wonderland Sale" },
   { img: img5, text: "", description: "End of Season Shoe Sale" },
-  { img: img6, text: "", description: "Spring Shoe Clearance " },
+  { img: img6, text: "", description: "Spring Shoe Clearance" },
   { img: img7, text: "", description: "Men’s Workwear Sale" },
   { img: img8, text: "", description: "Men’s Winter Collection Sale" },
   { img: img9, text: "", description: "Men’s Casual Wear Sale" },
-  { img: img12, text: "", description: "Men’ Half shirt" }
+  { img: img10, text: "", description: "Back to School Shoe Sale" },
+  { img: img11, text: "", description: "Summer Fashion Event" },
+  { img: img12, text: "", description: "Black Friday Extravaganza" },
+  { img: img13, text: "", description: "Holiday Gift Guide Sale" },
+  { img: img14, text: "", description: "Limited Offer: Exclusive Deals" },
 ];
 
 // Sample tableData for initial state
@@ -106,3 +110,12 @@ export const tableData = [
     designVariants: [{ img: null, text: "Add design" }],
   },
 ];
+
+
+export const truncateText = (text:string, maxWords:number) => {
+  const words = text.split(' ');
+  if (words.length > maxWords) {
+    return words.slice(0, maxWords).join(' ') + '...';
+  }
+  return text;
+};
