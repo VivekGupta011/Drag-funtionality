@@ -21,12 +21,10 @@ import { tableData } from "@/bin/CardsData";
 import toast from "react-hot-toast";
 import { truncateText } from "@/bin/CardsData";
 
-
-
-
 // Define the type for your data
 const Table: React.FC = () => {
   const [data, setData] = useState<any[]>(tableData);
+  let maxCard = 1;
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentStateIndex, setCurrentStateIndex] = useState<number | null>(
@@ -38,6 +36,35 @@ const Table: React.FC = () => {
   const [filterInput, setFilterInput] = useState("");
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    console.log("data");
+    console.log(data);
+  }, [data]);
+
+  const makeItFirst = (variantIndex: number) => {
+    // Update the state data
+    setData((prevData) => {
+      return prevData.map((state) => {
+        // Extract the variant from the given index
+        const variantToMove = state.designVariants[variantIndex];
+
+        // Remove the variant from its current position
+        const updatedVariants = state.designVariants.filter(
+          (_: any, index: number) => index !== variantIndex
+        );
+
+        // Insert the variant at the beginning of the array
+        updatedVariants.unshift(variantToMove);
+
+        return {
+          ...state,
+          designVariants: updatedVariants,
+        };
+      });
+    });
+    toast.success("Primary setup completed!");
+  };
 
   // Function to add a new filter to a state
   const addFilter = (index: number) => {
@@ -98,32 +125,27 @@ const Table: React.FC = () => {
       },
     ]);
     setCurrentIndex(data.length);
-    toast.success('State added Succesully.');
+    toast.success("State added Succesully.");
   };
 
   // Function to delete a state
   const deleteState = (index: number) => {
     setData(data.filter((_, i) => i !== index));
-    toast.error('State Deleted!')
+    toast.error("State Deleted!");
   };
 
   // Function to add a new variant column to a state
-  const addVariantColumn = (stateIndex: number) => {
+  const addVariantColumn = () => {
     setData((prevData) =>
-      prevData.map((item, i) => {
-        if (i === stateIndex) {
-          return {
-            ...item,
-            designVariants: [
-              ...item.designVariants,
-              { img: null, text: "Add design" },
-            ],
-          };
-        }
-        return item;
-      })
+      prevData.map((item) => ({
+        ...item,
+        designVariants: [
+          ...item.designVariants,
+          { img: null, text: "Add design" },
+        ],
+      }))
     );
-    toast.success('Variant added');
+    toast.success("Variant added");
   };
 
   // Function to handle click on "Add Filter" button
@@ -231,7 +253,7 @@ const Table: React.FC = () => {
       );
     }
     setModalOpen(false);
-    toast.success('Variant template updated');
+    toast.success("Variant template updated");
   };
 
   return (
@@ -344,7 +366,10 @@ const Table: React.FC = () => {
                                       }}
                                     >
                                       <p className="border border-solid p-1 bg-white rounded-md font-bold flex  justify-center items-center text-[20px] space-x-1 overflow-hidden whitespace-nowrap text-ellipsis">
-                                      {truncateText(item.filters.join(", "), 2)}
+                                        {truncateText(
+                                          item.filters.join(", "),
+                                          2
+                                        )}
                                       </p>
                                     </div>
                                   </div>
@@ -378,63 +403,85 @@ const Table: React.FC = () => {
                                           index={vi}
                                         >
                                           {(provided) => (
-                                            <>
-                                              <div
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                                className="relative bg-white p-4 w-[12rem] h-[13.5rem] min-w-[14rem] border-dotted border-gray-200 rounded-md shadow-md flex flex-col justify-center items-center"
-                                                style={{ borderWidth: "3px" }}
-                                              >
-                                                {variant.img ? (
-                                                  <div className="relative w-full h-32 flex items-center justify-center">
-                                                    <img
-                                                      src={variant.img?.src}
-                                                      alt={`Design ${vi + 1}`}
-                                                      className="w-full h-32 object-cover mb-2 rounded-md"
-                                                    />
-
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300">
-                                                      <button
-                                                        onClick={() => {}}
-                                                      >
-                                                        <FiEdit
-                                                          size="24"
-                                                          className="text-black"
-                                                        />
-                                                      </button>
-                                                    </div>
+                                            <div className="flex flex-row">
+                                              <div className="flex flex-col justify-center items-center space-y-2">
+                                              {index === 0 && vi < item.designVariants.length ? (
+                                                  <div>
+                                                    {
+                                                      vi!=0 ?<button
+                                                      onClick={() =>
+                                                        makeItFirst(vi)
+                                                      }
+                                                      className="bg-green-500 text-white text-sm font-bold px-1.5 py-1.5 rounded-md"
+                                                    >
+                                                      Set Primary
+                                                    </button>:''
+                                                    }
                                                   </div>
                                                 ) : (
-                                                  <button
-                                                    className="border border-solid p-2 rounded-md flex justify-center items-center space-x-1"
-                                                    onClick={() =>
-                                                      handleAddDesignClick(
-                                                        index,
-                                                        vi
-                                                      )
-                                                    }
-                                                  >
-                                                    <LuPlus
-                                                      size="25"
-                                                      className=""
-                                                    />
-                                                    <span>Add design</span>
-                                                  </button>
+                                                  ""
                                                 )}
-                                                <p
-                                                  className="text-gray-600 text-sm overflow-hidden whitespace-nowrap text-ellipsis font-bold py-3"
-                                                  style={{ maxWidth: "140px" }}
+                                                <div
+                                                  ref={provided.innerRef}
+                                                  {...provided.draggableProps}
+                                                  {...provided.dragHandleProps}
+                                                  className="relative bg-white p-4 w-[12rem] h-[13.5rem] min-w-[14rem] border-dotted border-gray-200 rounded-md shadow-md flex flex-col justify-center items-center"
+                                                  style={{ borderWidth: "3px" }}
                                                 >
-                                                  {variant.description}
-                                                </p>
+                                                  {variant?.img ? (
+                                                    <div className="relative w-full h-32 flex items-center justify-center">
+                                                      <img
+                                                        src={variant.img?.src}
+                                                        alt={`Design ${vi + 1}`}
+                                                        className="w-full h-32 object-cover mb-2 rounded-md"
+                                                      />
+
+                                                      <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                                                        <button
+                                                          onClick={() => {}}
+                                                        >
+                                                          <FiEdit
+                                                            size="24"
+                                                            className="text-black"
+                                                          />
+                                                        </button>
+                                                      </div>
+                                                    </div>
+                                                  ) : (
+                                                    <>
+                                                      <button
+                                                        className="border border-solid p-2 rounded-md flex justify-center items-center space-x-1"
+                                                        onClick={() =>
+                                                          handleAddDesignClick(
+                                                            index,
+                                                            vi
+                                                          )
+                                                        }
+                                                      >
+                                                        <LuPlus
+                                                          size="25"
+                                                          className=""
+                                                        />
+                                                        <span>Add design</span>
+                                                      </button>
+                                                    </>
+                                                  )}
+                                                  <p
+                                                    className="text-gray-600 text-sm overflow-hidden whitespace-nowrap text-ellipsis font-bold py-3"
+                                                    style={{
+                                                      maxWidth: "140px",
+                                                    }}
+                                                  >
+                                                    {variant?.description}
+                                                  </p>
+                                                </div>
                                               </div>
 
                                               <div
                                                 className="bg-gray-200 h-[13.5rem] mx-12"
                                                 style={{ width: "2px" }}
                                               ></div>
-                                            </>
+                                            </div>
                                           )}
                                         </Draggable>
                                       )
@@ -447,7 +494,7 @@ const Table: React.FC = () => {
                                       }}
                                     >
                                       <button
-                                        onClick={() => addVariantColumn(index)}
+                                        onClick={addVariantColumn}
                                         className="border border-solid p-3 bg-white rounded-md flex justify-center items-center space-x-1"
                                       >
                                         <LuPlus size="25" className="" />
