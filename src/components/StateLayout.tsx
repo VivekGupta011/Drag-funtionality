@@ -63,7 +63,7 @@ const Table: React.FC = () => {
         };
       });
     });
-    toast.success("Primary setup completed!");
+    toast.success("Primary setup successful!");
   };
 
   // Function to add a new filter to a state
