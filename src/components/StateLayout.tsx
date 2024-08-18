@@ -128,7 +128,7 @@ const Table: React.FC = () => {
       // usign map
       tempArray = [];
       let tempObj = data[0].designVariants.map((item: any) => {
-        tempArray.push(item);
+        tempArray.push({ img: null, text: "Add design" });
       });
     }
     setData([
