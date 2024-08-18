@@ -45,6 +45,8 @@ const Table: React.FC = () => {
   const makeItFirst = (variantIndex: number) => {
     // Update the state data
     setData((prevData) => {
+      console.log("prevData");
+      console.log(prevData);
       return prevData.map((state) => {
         // Extract the variant from the given index
         const variantToMove = state.designVariants[variantIndex];
@@ -69,8 +71,8 @@ const Table: React.FC = () => {
   // Function to add a new filter to a state
   const addFilter = (index: number) => {
     if (filterInput.trim()) {
-      setData((prevData) =>
-        prevData.map((item, i) => {
+      setData((prevData) => {
+        return prevData.map((item, i) => {
           if (i === index) {
             return {
               ...item,
@@ -78,8 +80,8 @@ const Table: React.FC = () => {
             };
           }
           return item;
-        })
-      );
+        });
+      });
       setFilterInput("");
     }
   };
@@ -115,15 +117,31 @@ const Table: React.FC = () => {
   };
 
   // Function to add a new state
+  let tempArray: any[];
   const addState = () => {
+    if (data.length > 0) {
+      let tempData = [];
+      for (let i = 0; i < data[0]?.designVariants?.length; i++) {
+        tempData.push({ img: null, text: "Add design" });
+      }
+
+      // usign map
+      tempArray = [];
+      let tempObj = data[0].designVariants.map((item: any) => {
+        tempArray.push(item);
+      });
+    }
     setData([
       ...data,
       {
         state: `Category ${data.length + 1}`,
         filters: [],
-        designVariants: [{ img: null, text: "Add design" }],
+        designVariants: tempArray,
       },
     ]);
+
+    console.log("data:");
+    console.log(data);
     setCurrentIndex(data.length);
     toast.success("State added Succesully.");
   };
@@ -139,8 +157,9 @@ const Table: React.FC = () => {
     setData((prevData) =>
       prevData.map((item) => ({
         ...item,
+
         designVariants: [
-          ...item.designVariants,
+          ...(item.designVariants || []),
           { img: null, text: "Add design" },
         ],
       }))
@@ -395,97 +414,109 @@ const Table: React.FC = () => {
                                   style={{ maxWidth: "100%" }}
                                 >
                                   <div className="flex space-x-4 min-w-max">
-                                    {item.designVariants.map(
-                                      (variant: any, vi: any) => (
-                                        <Draggable
-                                          key={vi}
-                                          draggableId={`variant-${index}-${vi}`}
-                                          index={vi}
-                                        >
-                                          {(provided) => (
-                                            <div className="flex flex-row">
-                                              <div className="flex flex-col justify-center items-center space-y-2">
-                                              {index === 0 && vi < item.designVariants.length ? (
-                                                  <div>
-                                                    {
-                                                      vi!=0 ?<button
-                                                      onClick={() =>
-                                                        makeItFirst(vi)
-                                                      }
-                                                      className="bg-green-500 text-white text-sm font-bold px-1.5 py-1.5 rounded-md"
-                                                    >
-                                                      Set Primary
-                                                    </button>:''
-                                                    }
-                                                  </div>
-                                                ) : (
-                                                  ""
-                                                )}
-                                                <div
-                                                  ref={provided.innerRef}
-                                                  {...provided.draggableProps}
-                                                  {...provided.dragHandleProps}
-                                                  className="relative bg-white p-4 w-[12rem] h-[13.5rem] min-w-[14rem] border-dotted border-gray-200 rounded-md shadow-md flex flex-col justify-center items-center"
-                                                  style={{ borderWidth: "3px" }}
-                                                >
-                                                  {variant?.img ? (
-                                                    <div className="relative w-full h-32 flex items-center justify-center">
-                                                      <img
-                                                        src={variant.img?.src}
-                                                        alt={`Design ${vi + 1}`}
-                                                        className="w-full h-32 object-cover mb-2 rounded-md"
-                                                      />
-
-                                                      <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                                    {item?.designVariants?.length > 0 &&
+                                      item.designVariants.map(
+                                        (variant: any, vi: any) => (
+                                          <Draggable
+                                            key={vi}
+                                            draggableId={`variant-${index}-${vi}`}
+                                            index={vi}
+                                          >
+                                            {(provided) => (
+                                              <div className="flex flex-row">
+                                                <div className="flex flex-col justify-center items-center space-y-2">
+                                                  {index === 0 &&
+                                                  vi <
+                                                    item.designVariants
+                                                      .length ? (
+                                                    <div>
+                                                      {vi != 0 ? (
                                                         <button
-                                                          onClick={() => {}}
+                                                          onClick={() =>
+                                                            makeItFirst(vi)
+                                                          }
+                                                          className="bg-green-500 text-white text-sm font-bold px-1.5 py-1.5 rounded-md"
                                                         >
-                                                          <FiEdit
-                                                            size="24"
-                                                            className="text-black"
-                                                          />
+                                                          Set Primary
                                                         </button>
-                                                      </div>
+                                                      ) : (
+                                                        ""
+                                                      )}
                                                     </div>
                                                   ) : (
-                                                    <>
-                                                      <button
-                                                        className="border border-solid p-2 rounded-md flex justify-center items-center space-x-1"
-                                                        onClick={() =>
-                                                          handleAddDesignClick(
-                                                            index,
-                                                            vi
-                                                          )
-                                                        }
-                                                      >
-                                                        <LuPlus
-                                                          size="25"
-                                                          className=""
-                                                        />
-                                                        <span>Add design</span>
-                                                      </button>
-                                                    </>
+                                                    ""
                                                   )}
-                                                  <p
-                                                    className="text-gray-600 text-sm overflow-hidden whitespace-nowrap text-ellipsis font-bold py-3"
+                                                  <div
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    className="relative bg-white p-4 w-[12rem] h-[13.5rem] min-w-[14rem] border-dotted border-gray-200 rounded-md shadow-md flex flex-col justify-center items-center"
                                                     style={{
-                                                      maxWidth: "140px",
+                                                      borderWidth: "3px",
                                                     }}
                                                   >
-                                                    {variant?.description}
-                                                  </p>
-                                                </div>
-                                              </div>
+                                                    {variant?.img ? (
+                                                      <div className="relative w-full h-32 flex items-center justify-center">
+                                                        <img
+                                                          src={variant.img?.src}
+                                                          alt={`Design ${
+                                                            vi + 1
+                                                          }`}
+                                                          className="w-full h-32 object-cover mb-2 rounded-md"
+                                                        />
 
-                                              <div
-                                                className="bg-gray-200 h-[13.5rem] mx-12"
-                                                style={{ width: "2px" }}
-                                              ></div>
-                                            </div>
-                                          )}
-                                        </Draggable>
-                                      )
-                                    )}
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                                                          <button
+                                                            onClick={() => {}}
+                                                          >
+                                                            <FiEdit
+                                                              size="24"
+                                                              className="text-black"
+                                                            />
+                                                          </button>
+                                                        </div>
+                                                      </div>
+                                                    ) : (
+                                                      <>
+                                                        <button
+                                                          className="border border-solid p-2 rounded-md flex justify-center items-center space-x-1"
+                                                          onClick={() =>
+                                                            handleAddDesignClick(
+                                                              index,
+                                                              vi
+                                                            )
+                                                          }
+                                                        >
+                                                          <LuPlus
+                                                            size="25"
+                                                            className=""
+                                                          />
+                                                          <span>
+                                                            Add design
+                                                          </span>
+                                                        </button>
+                                                      </>
+                                                    )}
+                                                    <p
+                                                      className="text-gray-600 text-sm overflow-hidden whitespace-nowrap text-ellipsis font-bold py-3"
+                                                      style={{
+                                                        maxWidth: "140px",
+                                                      }}
+                                                    >
+                                                      {variant?.description}
+                                                    </p>
+                                                  </div>
+                                                </div>
+
+                                                <div
+                                                  className="bg-gray-200 h-[13.5rem] mx-12"
+                                                  style={{ width: "2px" }}
+                                                ></div>
+                                              </div>
+                                            )}
+                                          </Draggable>
+                                        )
+                                      )}
                                     <div
                                       className="relative rounded-md flex justify-center items-center"
                                       style={{
