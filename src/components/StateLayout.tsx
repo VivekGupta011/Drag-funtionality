@@ -140,8 +140,6 @@ const Table: React.FC = () => {
       },
     ]);
 
-    console.log("data:");
-    console.log(data);
     setCurrentIndex(data.length);
     toast.success("State added Succesully.");
   };
@@ -159,6 +157,7 @@ const Table: React.FC = () => {
         ...item,
 
         designVariants: [
+          // Primary Variant Setup
           ...(item.designVariants || []),
           { img: null, text: "Add design" },
         ],
